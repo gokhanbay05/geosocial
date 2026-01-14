@@ -1,0 +1,34 @@
+.feed-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content-placeholder {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 40px;
+}
+
+.dev-panel {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+
+  background-color: rgba(249, 250, 251, 0.5);
+  border-radius: 12px;
+  border: 1px dashed var(--color-border-default);
+}
+
+.dev-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}

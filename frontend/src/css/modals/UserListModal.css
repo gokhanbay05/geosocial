@@ -1,0 +1,53 @@
+.user-list-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: auto;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.user-list-item:hover {
+  background-color: var(--color-bg-surface);
+}
+
+.user-list-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-list-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-default);
+}
+
+.user-list-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+.user-list-fullname {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.user-list-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}

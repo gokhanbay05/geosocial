@@ -1,0 +1,110 @@
+.auth-page-container {
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at 2px 2px, var(--color-border-default) 1px, transparent 0),
+    linear-gradient(135deg, rgba(10, 76, 117, 0.29) 0%, rgba(231, 187, 225, 0.29) 100%);
+  background-size: 32px 32px, 100% 100%;
+  background-color: var(--color-bg-surface);
+}
+
+.auth-card-frame {
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--color-bg-surface-alt);
+  border-radius: 32px;
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 20px 60px var(--color-shadow-default);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.auth-card-header {
+  padding: 12px;
+  background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-default);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.auth-logo-text {
+  font-family: "Inter", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.auth-card-body {
+  padding: 32px 24px;
+  background-color: var(--color-bg-surface-alt);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-card-footer {
+  padding: 24px;
+  background-color: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border-default);
+}
+
+.auth-footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.auth-footer-text {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.auth-footer-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.auth-footer-link:hover {
+  text-decoration: underline;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

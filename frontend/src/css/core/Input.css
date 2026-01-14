@@ -1,0 +1,96 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+
+  background-color: var(--color-bg-surface-alt);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  color: var(--color-text-dark);
+  font-size: 14px;
+
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.input-field::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+/* Focus Durumu */
+.input-field:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(10, 76, 117, 0.1);
+}
+
+.input-field.has-error {
+  border-color: var(--color-danger-text);
+}
+.input-field.has-error:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+
+.input-field:disabled {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.input-has-icon-left {
+  padding-left: 38px;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.input-has-right {
+  padding-right: 48px;
+}
+
+.input-right-element {
+  position: absolute;
+  right: 8px;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 5;
+}
+
+.input-right-element button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+
+.input-right-element button:hover {
+  color: var(--color-primary);
+}

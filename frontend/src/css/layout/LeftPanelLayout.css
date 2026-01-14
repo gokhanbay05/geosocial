@@ -1,0 +1,97 @@
+.left-panel {
+  pointer-events: auto;
+  width: 380px;
+  height: 100%;
+  display: flex;
+  padding: 0;
+  overflow: visible;
+  animation: slide-in-left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.left-panel-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-surface-alt);
+  border-radius: 24px;
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 8px 32px var(--color-shadow-default);
+  overflow: hidden;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.panel-header-area {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-surface);
+}
+
+.panel-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo-text {
+  font-family: "Inter", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.panel-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-gutter: stable;
+}
+
+.panel-nav-bar {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-btn {
+  color: var(--color-text-muted);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.nav-btn.is-active {
+  color: var(--color-primary);
+}
+
+.nav-btn:hover {
+  color: var(--color-text-dark);
+}
+
+.nav-btn-add {
+  border-radius: 50%;
+  box-shadow: 0 4px 14px var(--color-shadow-default);
+  transform: scale(1.1);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-btn-add:hover {
+  transform: scale(1.25);
+}
