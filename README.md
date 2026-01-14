@@ -25,14 +25,6 @@
 | ![Feed](./assets/feed.png) | ![Map](./assets/map.png) |
 
 
-## 🎥 Demo
-
-Check out how it works:
-
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://youtu.be/VIDEO_ID)
-
----
-
 ## ⚙️ Getting Started
 
 Follow these steps to set up the project locally.
