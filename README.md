@@ -3,7 +3,6 @@
 > A modern social media platform where users can share location-based posts, interact on an interactive map, and chat in real-time.
 
 ![Project Banner](./assets/banner.png)
-*(Tip: Replace this image with a screenshot of your main map view)*
 
 ## 🚀 Features
 
@@ -11,7 +10,7 @@
 -   **💬 Real-time Chat:** Instant messaging powered by Socket.io.
 -   **📷 Media Sharing:** Create posts with images and descriptions.
 -   **🔐 Authentication:** Secure user authentication with JWT.
--   **🎨 Modern UI:** Built with React, TailwindCSS, and glassmorphism design effects.
+-   **🎨 Modern UI:** Built with React and TailwindCSS.
 
 ## 🛠️ Tech Stack
 
@@ -25,15 +24,12 @@
 |-----------|----------|
 | ![Feed](./assets/feed.png) | ![Map](./assets/map.png) |
 
-*(Tip: Add your screenshots to the `assets` folder and update the filenames above)*
 
 ## 🎥 Demo
 
 Check out how it works:
 
 [![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://youtu.be/VIDEO_ID)
-
-*(Tip: Upload your video to YouTube and replace `VIDEO_ID` with your actual video ID. Or, upload a GIF to the assets folder)*
 
 ---
 
@@ -44,7 +40,7 @@ Follow these steps to set up the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/geosocial.git
+git clone https://github.com/gokhanbay05/geosocial.git
 cd geosocial
 ```
 
@@ -61,7 +57,7 @@ Create a `.env` file in the `backend` folder and add the following variables:
 ```properties
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_super_secret_key
+JWT_SECRET=your_secret_key
 CLIENT_URL=http://localhost:5173
 COOKIE_NAME=geosocial_token
 NODE_ENV=development
