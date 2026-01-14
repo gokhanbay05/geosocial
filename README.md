@@ -1,4 +1,4 @@
-# Geosocial - Location-Based Social Media
+# 🌍 Geosocial - Location-Based Social Media
 
 > A modern social media platform where users can share location-based posts, interact on an interactive map, and chat in real-time.
 
@@ -56,19 +56,26 @@ npm install
 ```
 
 **Configuration:**
-Create a `.env` file in the `backend` folder:
-```bash
-cp .env.example .env
+Create a `.env` file in the `backend` folder and add the following variables:
+
+```properties
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_key
+CLIENT_URL=http://localhost:5173
+COOKIE_NAME=geosocial_token
+NODE_ENV=development
 ```
-Open `.env` and configure your `MONGO_URI` and `JWT_SECRET`.
 
 **Seed Data (Optional):**
 Populate the database with sample users and posts:
+
 ```bash
 npm run seed
 ```
 
 **Start Server:**
+
 ```bash
 npm run dev
 ```
@@ -76,23 +83,25 @@ npm run dev
 ### 3. Frontend Setup
 
 Open a new terminal:
+
 ```bash
 cd frontend
 npm install
 ```
 
 **Configuration:**
-Create a `.env` file in the `frontend` folder:
-```bash
-cp .env.example .env
+Create a `.env` file in the `frontend` folder and add the following variables. (Note: You need a free API key from MapTiler)
+
+```properties
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+VITE_MAPTILER_KEY=your_maptiler_api_key
 ```
-Ensure `VITE_API_URL` points to your backend (default: `http://localhost:5000/api`).
 
 **Start App:**
+
 ```bash
 npm run dev
 ```
 
 Visit `http://localhost:5173` to view the app.
-
----
