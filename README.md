@@ -94,7 +94,7 @@ npm run dev
 
 Visit `http://localhost:5173` to view the app.
 
-### 5. Demo Credentials
+### 4. Demo Credentials
 
 To explore the application with pre-loaded data, you can use the following demo account:
 
