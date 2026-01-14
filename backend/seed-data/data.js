@@ -4,21 +4,21 @@ export const USERS = [
         email: "demo@geosocial.com",
         password: "password123",
         avatar: "user1.jpg",
-        bio: "Dijital gezgin. İstanbul aşığı. 📸"
+        bio: "Digital nomad. Love Istanbul. 📸"
     },
     {
         username: "elif_yilmaz",
         email: "elif@example.com",
         password: "password123",
         avatar: "user2.jpg",
-        bio: "Kahve ve Kod. ☕️💻"
+        bio: "Coffee and Code. ☕️💻"
     },
     {
         username: "can_art",
         email: "can@example.com",
         password: "password123",
         avatar: "user3.jpg",
-        bio: "Sokak fotoğrafçısı."
+        bio: "Street photographer."
     },
     {
         username: "sarah_travels",
@@ -39,28 +39,28 @@ export const USERS = [
 export const POSTS = [
     {
         username: "elif_yilmaz",
-        description: "Galata Kulesi'nden manzara efsane! 🌇",
+        description: "The view from Galata Tower is legendary! 🌇",
         image: "post1.jpg",
         latitude: 41.025658,
         longitude: 28.974155
     },
     {
         username: "can_art",
-        description: "Vapur keyfi ve martılar... İstanbul klasiği.",
+        description: "Ferry ride and seagulls... Istanbul classic.",
         image: "post2.jpg",
         latitude: 40.990867,
         longitude: 29.022833
     },
     {
         username: "demo_user",
-        description: "Maçka Parkı'nda sabah yürüyüşü 🌳",
+        description: "Morning walk at Macka Park 🌳",
         image: "post3.jpg",
         latitude: 41.041662,
         longitude: 28.993739
     },
     {
         username: "can_art",
-        description: "Karaköy'de yeni nesil kahveci keşfi.",
+        description: "Discovered a new generation coffee shop in Karakoy.",
         image: "post4.jpg",
         latitude: 41.022960,
         longitude: 28.977465
@@ -97,7 +97,7 @@ export const POSTS = [
 
     {
         username: "elif_yilmaz",
-        description: "Londra'da yağmurlu bir gün ama Big Ben harika görünüyor",
+        description: "Rainy day in London but Big Ben looks great",
         image: "post10.jpg",
         latitude: 51.500729,
         longitude: -0.124625

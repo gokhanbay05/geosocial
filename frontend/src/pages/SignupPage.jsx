@@ -150,7 +150,7 @@ export default function SignupPage() {
                 label="Email"
                 type="email"
                 name="email"
-                placeholder="ornek@email.com"
+                placeholder="user@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 icon={<Mail size={18} />}

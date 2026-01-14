@@ -1,4 +1,4 @@
-# 🌍 Geosocial - Location-Based Social Media
+# Geosocial - Location-Based Social Media
 
 > A modern social media platform where users can share location-based posts, interact on an interactive map, and chat in real-time.
 
@@ -101,3 +101,12 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` to view the app.
+
+### 5. Demo Credentials
+
+To explore the application with pre-loaded data, you can use the following demo account:
+
+-   **Email:** `demo@geosocial.com`
+-   **Password:** `password123`
+
+_Note: You can also create a new account via the Sign Up page._

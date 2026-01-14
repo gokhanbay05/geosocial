@@ -1,7 +1,8 @@
 {
+  "type": "module",
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend API for GeoSocial",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +10,7 @@
     "seed": "node seed.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Gokhan",
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^10.2.0",

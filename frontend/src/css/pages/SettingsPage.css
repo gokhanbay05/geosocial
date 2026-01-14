@@ -13,6 +13,11 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    scrollbar-width: none; /* Firefox */
+}
+
+.settings-scroll-area::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .settings-section {

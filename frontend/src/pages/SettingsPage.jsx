@@ -86,7 +86,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <Divider />
+                <Divider className="-mx-4" />
 
                 <div className="settings-section">
                     <h3 className="settings-section-title">Map Style</h3>
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <Divider />
+                <Divider className="-mx-4" />
 
                 <div className="settings-section">
                     <h3 className="settings-section-title">Account Security</h3>
@@ -150,7 +150,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <Divider />
+                <Divider className="-mx-4" />
 
                 <div className="settings-section">
                     <Button

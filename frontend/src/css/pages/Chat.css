@@ -21,6 +21,8 @@
     cursor: pointer;
     transition: all 0.2s;
     border-bottom: 1px solid var(--color-border-default);
+    width: 100%;
+    /* Force full width */
 }
 
 .conversation-item:hover {
