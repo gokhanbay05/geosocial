@@ -65,7 +65,7 @@ npm run seed
 **Start Server:**
 
 ```bash
-npm run dev
+npm start
 ```
 
 ### 3. Frontend Setup
