@@ -79,6 +79,8 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = (req, res) => {
   res.cookie(process.env.COOKIE_NAME, "", {
     httpOnly: true,
+    secure: true, 
+    sameSite: "None",
     expires: new Date(0),
   });
 
