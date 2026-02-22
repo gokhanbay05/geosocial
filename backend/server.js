@@ -5,10 +5,10 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
-import fs from "fs";
 import { fileURLToPath } from "url";
 
 import connectDB from "./config/db.js";
+import { runAutoSeed } from "./utils/autoSeed.js";
 import { notFound, errorHandler } from "./middlewares/error.middleware.js";
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 
@@ -17,13 +17,13 @@ import userRoutes from "./routes/user.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
-import cleanupFiles from "./utils/cleanup.js";
 
 import { app, server, io } from "./socket/socket.js";
 
 dotenv.config();
-connectDB();
-cleanupFiles();
+connectDB().then(() => {
+  runAutoSeed(); 
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,18 +48,6 @@ app.use(
 );
 
 app.use("/api", apiLimiter);
-
-app.get("/uploads/:filename", (req, res) => {
-  const filename = req.params.filename;
-  const safeFilename = path.basename(filename);
-  const filePath = path.join(__dirname, "uploads", safeFilename);
-
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).json({ message: "File not found" });
-  }
-});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

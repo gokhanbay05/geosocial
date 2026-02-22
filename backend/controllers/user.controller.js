@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
+import cloudinary, { uploadFromBuffer } from "../utils/cloudinary.js";
 
 const getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
@@ -17,18 +18,23 @@ const updateProfile = asyncHandler(async (req, res) => {
     user.bio = req.body.bio || user.bio;
 
     if (req.file) {
-      user.avatarUrl = `/uploads/${req.file.filename}`;
+      if (user.avatarUrl && user.avatarUrl.includes("cloudinary")) {
+        try {
+          const parts = user.avatarUrl.split('/');
+          const fileName = parts.pop().split('.')[0];
+          const folder = parts[parts.length - 1];
+          await cloudinary.uploader.destroy(`${folder}/${fileName}`);
+        } catch (err) {
+          console.error("Old avatar delete failed:", err.message);
+        }
+      }
+
+      const result = await uploadFromBuffer(req.file.buffer, "geosocial_avatars");
+      user.avatarUrl = result.secure_url;
     }
 
     const updatedUser = await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      username: updatedUser.username,
-      email: updatedUser.email,
-      avatarUrl: updatedUser.avatarUrl,
-      bio: updatedUser.bio,
-    });
+    res.json(updatedUser);
   } else {
     res.status(404);
     throw new Error("User not found");

@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Conversation from "../models/Conversation.js";
-import Message from "../models/Message.js";
+import Message from "../models/Message.js"
+import { uploadFromBuffer } from "../utils/cloudinary.js";
 
 const sendMessage = asyncHandler(async (req, res) => {
     const { text } = req.body;
@@ -12,7 +13,8 @@ const sendMessage = asyncHandler(async (req, res) => {
     let messageType = "text";
 
     if (req.file) {
-        mediaUrl = `/uploads/${req.file.filename}`;
+        const result = await uploadFromBuffer(req.file.buffer, "geosocial_chat");
+        mediaUrl = result.secure_url;
         messageType = "image";
     }
 
@@ -72,7 +74,6 @@ const getConversations = asyncHandler(async (req, res) => {
                 (p) => p._id.toString() !== userId.toString()
             );
 
-            // Eğer kullanıcı silinmişse null döndür
             if (!otherParticipant) return null;
 
             return {

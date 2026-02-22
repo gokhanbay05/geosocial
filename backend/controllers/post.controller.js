@@ -2,8 +2,7 @@ import asyncHandler from "express-async-handler";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
-import fs from "fs";
-import path from "path";
+import cloudinary, { uploadFromBuffer } from "../utils/cloudinary.js";
 
 const createPost = asyncHandler(async (req, res) => {
   const { description, latitude, longitude } = req.body;
@@ -27,13 +26,13 @@ const createPost = asyncHandler(async (req, res) => {
     throw new Error("Please upload an image or video");
   }
 
+  const result = await uploadFromBuffer(req.file.buffer, "geosocial_posts");
   const mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
-  const mediaUrl = `/uploads/${req.file.filename}`;
 
   const post = await Post.create({
     author: req.user._id,
     description,
-    mediaUrl,
+    mediaUrl: result.secure_url, 
     mediaType,
     location: {
       type: "Point",
@@ -134,18 +133,15 @@ const likePost = asyncHandler(async (req, res) => {
     { _id: postId, likes: userId },
     {
       $pull: { likes: userId },
-      $inc: { "stats.likeCount": -1, "stats.totalLikesReceived": -1 }
+      $inc: { "stats.likeCount": -1 }
     },
     { new: true }
   );
 
   if (unlikeResult) {
-
     await User.findByIdAndUpdate(unlikeResult.author, { $inc: { "stats.totalLikesReceived": -1 } });
-
     return res.json({ isLiked: false, likeCount: unlikeResult.stats.likeCount });
   }
-
 
   const likeResult = await Post.findOneAndUpdate(
     { _id: postId, likes: { $ne: userId } },
@@ -178,15 +174,28 @@ const deletePost = asyncHandler(async (req, res) => {
     throw new Error("You are not authorized to delete this post");
   }
 
-  const __dirname = path.resolve();
-  const filePath = path.join(__dirname, post.mediaUrl);
+  if (post.mediaUrl && post.mediaUrl.includes("cloudinary")) {
+    try {
+      const parts = post.mediaUrl.split('/');
+      const fileNameWithExtension = parts.pop();
+      const publicIdWithoutExtension = fileNameWithExtension.split('.')[0]; 
+      
+      const folderName = parts[parts.length - 1]; 
+      const fullPublicId = `${folderName}/${publicIdWithoutExtension}`;
 
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+      const resourceType = post.mediaType === "video" ? "video" : "image";
+
+      const result = await cloudinary.uploader.destroy(fullPublicId, {
+        resource_type: resourceType 
+      });
+      console.log(`Cloudinary (${resourceType}) delete result:`, result); 
+      
+    } catch (cloudErr) {
+      console.error("Cloudinary deletion error:", cloudErr.message);
+    }
   }
 
   await Comment.deleteMany({ post: post._id });
-
   await post.deleteOne();
 
   await User.findByIdAndUpdate(req.user._id, {

@@ -8,16 +8,10 @@ export function cn(...inputs) {
 export const getFileUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150";
   if (path.startsWith("http")) return path;
-
-  let cleanPath = path.replace(/\\/g, "/");
-  if (!cleanPath.startsWith("/")) {
-    cleanPath = "/" + cleanPath;
-  }
-
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
   const baseUrl = apiUrl.replace("/api", "");
-
-  return `${baseUrl}${cleanPath}`;
+  return `${baseUrl}${path.startsWith("/") ? path : "/" + path}`;
 };
 
 export const formatTimeAgo = (dateString) => {

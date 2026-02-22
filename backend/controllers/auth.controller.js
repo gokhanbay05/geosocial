@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
+import { uploadFromBuffer } from "../utils/cloudinary.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -12,7 +13,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Username or email already exists");
   }
 
-  const avatarUrl = req.file ? `/uploads/${req.file.filename}` : "";
+  let avatarUrl = "";
+  if (req.file) {
+    const result = await uploadFromBuffer(req.file.buffer, "geosocial_avatars");
+    avatarUrl = result.secure_url;
+  }
 
   const user = await User.create({
     username,
@@ -72,7 +77,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = (req, res) => {
-  res.cookie("jwt", "", {
+  res.cookie(process.env.COOKIE_NAME, "", {
     httpOnly: true,
     expires: new Date(0),
   });
