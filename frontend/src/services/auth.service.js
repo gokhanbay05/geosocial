@@ -1,4 +1,4 @@
-import api from "../lib/api";
+import api, { clearAuthToken } from "../lib/api";
 
 export const register = async (userData) => {
   const formData = new FormData();
@@ -25,8 +25,12 @@ export const login = async (credentials) => {
 };
 
 export const logout = async () => {
-  const response = await api.post("/auth/logout");
-  return response.data;
+  try {
+    const response = await api.post("/auth/logout");
+    return response.data;
+  } finally {
+    clearAuthToken();
+  }
 };
 
 export const getMe = async () => {

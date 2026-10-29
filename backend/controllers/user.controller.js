@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
+import generateToken from "../utils/generateToken.js";
 
 const getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
@@ -7,7 +8,17 @@ const getMe = asyncHandler(async (req, res) => {
     .populate("followers", "username avatarUrl")
     .populate("following", "username avatarUrl");
 
-  res.json(user);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const token = generateToken(res, user._id);
+
+  res.json({
+    ...user.toObject(),
+    token,
+  });
 });
 
 const updateProfile = asyncHandler(async (req, res) => {

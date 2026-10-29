@@ -3,6 +3,7 @@ import { getConversations, getMessages, sendMessage } from "../services/chat.ser
 import { handleError } from "../lib/errorHandler";
 import { io } from "socket.io-client";
 import { useAuthStore } from "./useAuthStore";
+import { getAuthToken } from "../lib/api";
 
 export const useChatStore = create((set, get) => ({
     conversations: [],
@@ -18,7 +19,14 @@ export const useChatStore = create((set, get) => ({
         const { user } = useAuthStore.getState();
         if (!user || get().socket) return;
 
-        const socket = io(import.meta.env.VITE_SOCKET_URL, {
+        const socketUrl =
+            import.meta.env.VITE_SOCKET_URL ||
+            (import.meta.env.PROD
+                ? "https://geosocial-api.onrender.com"
+                : "http://localhost:5000");
+
+        const socket = io(socketUrl, {
+            auth: { token: getAuthToken() },
             query: { userId: user._id },
             withCredentials: true,
         });
