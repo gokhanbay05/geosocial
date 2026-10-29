@@ -1,17 +1,18 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 
 /**
- * Sadece üstteki tutma çubuğundan (SheetDragHandle) tutularak
+ * Sadece üstteki çentikten (SheetDragHandle) tutularak veya dokunularak
  * alttan çıkan panellerin aşağı sürüklenip kapatılmasını yöneten atomik hook.
  * İçerik kaydırma (scroll) alanlarından tamamen izoledir.
  */
-export function useSheetDrag({ isOpen, onClose, threshold = 90 }) {
+export function useSheetDrag({ isOpen, onClose, threshold = 80 }) {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   const startYRef = useRef(0);
   const startTimeRef = useRef(0);
   const currentOffsetRef = useRef(0);
+  const maxMovementRef = useRef(0);
   const activePointerIdRef = useRef(null);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export function useSheetDrag({ isOpen, onClose, threshold = 90 }) {
       setDragOffset(0);
       setIsDragging(false);
       currentOffsetRef.current = 0;
+      maxMovementRef.current = 0;
     }
   }, [isOpen]);
 
@@ -29,13 +31,14 @@ export function useSheetDrag({ isOpen, onClose, threshold = 90 }) {
     startYRef.current = e.clientY;
     startTimeRef.current = performance.now();
     currentOffsetRef.current = 0;
+    maxMovementRef.current = 0;
     setIsDragging(true);
 
     if (e.currentTarget.setPointerCapture) {
       try {
         e.currentTarget.setPointerCapture(e.pointerId);
       } catch {
-        // Ignore pointer capture errors on synthetic events
+        // Ignore pointer capture errors
       }
     }
   }, []);
@@ -45,9 +48,12 @@ export function useSheetDrag({ isOpen, onClose, threshold = 90 }) {
       if (!isDragging || activePointerIdRef.current !== e.pointerId) return;
 
       const deltaY = e.clientY - startYRef.current;
-      // Sadece aşağı yönlü sürüklemeye izin ver (yukarı çekilirse sıfırda tut)
-      const clampedOffset = Math.max(0, deltaY);
+      maxMovementRef.current = Math.max(
+        maxMovementRef.current,
+        Math.abs(deltaY)
+      );
 
+      const clampedOffset = Math.max(0, deltaY);
       currentOffsetRef.current = clampedOffset;
       setDragOffset(clampedOffset);
     },
@@ -67,13 +73,16 @@ export function useSheetDrag({ isOpen, onClose, threshold = 90 }) {
       }
 
       const elapsed = Math.max(1, performance.now() - startTimeRef.current);
-      const velocity = currentOffsetRef.current / elapsed; // px/ms
+      const velocity = currentOffsetRef.current / elapsed;
+      const isTap = maxMovementRef.current < 8 && elapsed < 350;
       const shouldClose =
+        isTap ||
         currentOffsetRef.current > threshold ||
-        (currentOffsetRef.current > 35 && velocity > 0.55);
+        (currentOffsetRef.current > 30 && velocity > 0.5);
 
       activePointerIdRef.current = null;
       currentOffsetRef.current = 0;
+      maxMovementRef.current = 0;
       setIsDragging(false);
       setDragOffset(0);
 

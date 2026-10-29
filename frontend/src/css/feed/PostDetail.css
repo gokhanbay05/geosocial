@@ -239,19 +239,23 @@
     bottom: 0;
     width: 100%;
     max-width: 100%;
-    height: 92dvh;
+    height: 85dvh;
     z-index: 60;
     flex-direction: column;
+    overflow: visible;
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
+    transform: translateY(120%);
   }
 
   .detail-media-section {
     flex: 0 0 auto;
     width: 100%;
-    height: 38dvh;
-    max-height: 42dvh;
-    border-top-left-radius: 0;
+    height: 36dvh;
+    max-height: 40dvh;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    overflow: hidden;
   }
 
   .detail-info-section {
@@ -263,6 +267,10 @@
     border-top: 1px solid var(--color-border-default);
     border-top-right-radius: 0;
     overflow: hidden;
+  }
+
+  .post-detail-close-btn {
+    display: none;
   }
 
   .detail-comments-container {

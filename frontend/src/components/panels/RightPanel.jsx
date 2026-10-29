@@ -42,12 +42,17 @@ export default function RightPanel() {
 
   return (
     <aside className={panelClass} style={dragStyle}>
-      <div className="right-panel-inner">
-        <SheetDragHandle handleProps={handleProps} />
+      <SheetDragHandle handleProps={handleProps} />
 
+      <div className="right-panel-inner">
         <div className="right-panel-header">
           <div className="panel-header">Posts in this area</div>
-          <Button variant="ghost" size="icon" onClick={closeRightPanel}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="right-panel-close-btn"
+            onClick={closeRightPanel}
+          >
             <X size={20} />
           </Button>
         </div>

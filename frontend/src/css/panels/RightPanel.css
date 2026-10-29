@@ -80,10 +80,11 @@
     bottom: calc(64px + env(safe-area-inset-bottom, 0px));
     width: 100%;
     max-width: 100%;
-    height: calc(82dvh - 64px - env(safe-area-inset-bottom, 0px));
+    height: calc(80dvh - 64px - env(safe-area-inset-bottom, 0px));
     z-index: 30;
+    overflow: visible;
     opacity: 1;
-    transform: translateY(115%);
+    transform: translateY(120%);
     visibility: hidden;
     transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1),
       visibility 0.45s step-end;
@@ -103,7 +104,11 @@
   }
 
   .right-panel-header {
-    padding: 6px 16px 10px 16px;
+    padding: 12px 20px;
+  }
+
+  .right-panel-close-btn {
+    display: none;
   }
 
   .right-panel-content {

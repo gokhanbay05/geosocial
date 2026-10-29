@@ -7,7 +7,6 @@ import {
   MessageCircle,
   Settings,
   Map,
-  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "../../store/useUIStore";
@@ -39,9 +38,9 @@ export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
         </defs>
       </svg>
 
-      <div className="left-panel-inner">
-        <SheetDragHandle handleProps={handleProps} />
+      <SheetDragHandle handleProps={handleProps} />
 
+      <div className="left-panel-inner">
         <div className="panel-header-area">
           <div className="panel-logo-container">
             <Map
@@ -52,16 +51,6 @@ export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
             />
             <h1 className="app-logo-text text-gradient-animated">GeoSocial</h1>
           </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="mobile-panel-close-btn"
-            onClick={closeMobilePanel}
-            aria-label="Close panel"
-          >
-            <ChevronDown size={22} />
-          </Button>
         </div>
 
         <div className="panel-content-area">{children}</div>

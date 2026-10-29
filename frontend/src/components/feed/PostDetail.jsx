@@ -290,7 +290,12 @@ export default function PostDetail() {
                     <Trash2 size={20} />
                   </Button>
                 )}
-                <Button variant="ghost" size="icon" onClick={closePostDetail}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="post-detail-close-btn"
+                  onClick={closePostDetail}
+                >
                   <ChevronDown size={24} />
                 </Button>
               </div>

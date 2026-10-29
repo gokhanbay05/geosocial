@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import "../../css/mobile/MobileBottomNav.css";
 import Button from "../core/Button";
 import {
@@ -7,6 +8,7 @@ import {
   Plus,
   MessageCircle,
   Settings,
+  ChevronUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "../../store/useUIStore";
@@ -14,8 +16,8 @@ import { usePostStore } from "../../store/usePostStore";
 import { useProfileStore } from "../../store/useProfileStore";
 
 /**
- * Mobil ve tablet ekranlarda (< 1024px) ekranın altında sabit duran navigasyon barı
- * ve harita üzerinde sol üstte yer alan kompakt GeoSocial rozeti.
+ * Mobil ve tablet ekranlarda (< 1024px) web tasarımıyla birebir aynı 5'li alt navigasyon barı,
+ * çekmece kapalıyken üstünde duran açma çentiği (notch) ve üst ortadaki yarı saydam GeoSocial logosu.
  */
 export default function MobileBottomNav() {
   const {
@@ -27,9 +29,36 @@ export default function MobileBottomNav() {
     showMapOnMobile,
   } = useUIStore();
   const { activePost, closePostDetail } = usePostStore();
-  const { resetProfileView } = useProfileStore();
+  const { viewingProfile, clearViewedProfile } = useProfileStore();
 
-  const isMapActive = !isMobilePanelOpen && !isRightPanelOpen && !activePost;
+  const notchStartYRef = useRef(null);
+
+  const isAllClosed = !isMobilePanelOpen && !isRightPanelOpen && !activePost;
+
+  const openDefaultProfileSheet = () => {
+    if (activePost) {
+      closePostDetail();
+    }
+    clearViewedProfile();
+    setLeftPanelTab("profile");
+  };
+
+  const handleNotchPointerDown = (e) => {
+    notchStartYRef.current = e.clientY;
+  };
+
+  const handleNotchPointerUp = (e) => {
+    if (notchStartYRef.current !== null) {
+      const deltaY = e.clientY - notchStartYRef.current;
+      notchStartYRef.current = null;
+      // Yukarı sürükleme veya tıklama ile varsayılan olarak Profil çekmecesini aç
+      if (deltaY <= 10) {
+        openDefaultProfileSheet();
+      }
+    } else {
+      openDefaultProfileSheet();
+    }
+  };
 
   const handleTabSelect = (tabName) => {
     if (activePost) {
@@ -37,10 +66,16 @@ export default function MobileBottomNav() {
     }
 
     if (tabName === "profile") {
-      resetProfileView();
+      clearViewedProfile();
     }
 
-    // Aynı sekmeye tekrar dokunulursa paneli kapatıp haritayı göster
+    // Search sekmesinde başkasının profili açıksa ve Search ikonuna basıldıysa arama ekranına dön
+    if (tabName === "search" && isMobilePanelOpen && leftPanelTab === "search" && viewingProfile) {
+      clearViewedProfile();
+      return;
+    }
+
+    // Açık olan sekmeye tekrar dokunulursa çekmeceyi kapat
     if (isMobilePanelOpen && leftPanelTab === tabName) {
       showMapOnMobile();
       return;
@@ -49,30 +84,17 @@ export default function MobileBottomNav() {
     setLeftPanelTab(tabName);
   };
 
-  const handleMapClick = () => {
-    if (activePost) {
-      closePostDetail();
-    }
-    showMapOnMobile();
-  };
-
-  const getTabClass = (tabName) =>
+  const getNavClass = (tabName) =>
     cn(
-      "mobile-nav-btn",
+      "nav-btn",
       isMobilePanelOpen && !activePost && leftPanelTab === tabName && "is-active"
     );
 
   return (
     <>
-      <div
-        className="mobile-floating-brand"
-        onClick={handleMapClick}
-        role="button"
-        tabIndex={0}
-        aria-label="Return to map"
-      >
+      <div className="mobile-floating-brand">
         <Map
-          size={20}
+          size={22}
           stroke="url(#panel-logo-grad)"
           strokeWidth={2.5}
           className="shrink-0"
@@ -82,67 +104,67 @@ export default function MobileBottomNav() {
         </span>
       </div>
 
-      <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("mobile-nav-btn", isMapActive && "is-active")}
-          onClick={handleMapClick}
-          aria-label="Map"
-        >
-          <Map size={22} />
-        </Button>
+      <div className="mobile-bottom-nav">
+        {isAllClosed && (
+          <div
+            className="mobile-closed-notch"
+            onPointerDown={handleNotchPointerDown}
+            onPointerUp={handleNotchPointerUp}
+            role="button"
+            tabIndex={0}
+            aria-label="Open profile drawer"
+          >
+            <ChevronUp size={20} strokeWidth={2.5} />
+          </div>
+        )}
 
         <Button
           variant="ghost"
           size="icon"
-          className={getTabClass("profile")}
+          className={getNavClass("profile")}
           onClick={() => handleTabSelect("profile")}
-          aria-label="Profile"
         >
-          <User size={22} />
+          <User size={24} />
         </Button>
 
         <Button
           variant="ghost"
           size="icon"
-          className={getTabClass("search")}
+          className={getNavClass("search")}
           onClick={() => handleTabSelect("search")}
-          aria-label="Search"
         >
-          <Search size={22} />
+          <Search size={24} />
         </Button>
 
         <Button
           variant="primary"
           size="icon"
-          className="mobile-nav-btn-add"
+          className="nav-btn-add"
           onClick={() => openModal("createPost")}
-          aria-label="Create Post"
         >
-          <Plus size={22} />
+          <Plus size={24} />
         </Button>
+
+        <div className="nav-badge-container">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={getNavClass("chat")}
+            onClick={() => handleTabSelect("chat")}
+          >
+            <MessageCircle size={24} />
+          </Button>
+        </div>
 
         <Button
           variant="ghost"
           size="icon"
-          className={getTabClass("chat")}
-          onClick={() => handleTabSelect("chat")}
-          aria-label="Chat"
-        >
-          <MessageCircle size={22} />
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className={getTabClass("settings")}
+          className={getNavClass("settings")}
           onClick={() => handleTabSelect("settings")}
-          aria-label="Settings"
         >
-          <Settings size={22} />
+          <Settings size={24} />
         </Button>
-      </nav>
+      </div>
     </>
   );
 }

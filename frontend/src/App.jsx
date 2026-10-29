@@ -43,7 +43,7 @@ export default function App() {
 
   if (isCheckingAuth) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-white dark:bg-gray-950">
+      <div className="h-dvh w-screen flex items-center justify-center bg-white dark:bg-gray-950">
         <Spinner size="lg" color="primary" />
       </div>
     );
@@ -91,7 +91,7 @@ export default function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <div className="h-screen w-screen overflow-hidden relative bg-[var(--color-bg-surface-alt)]">
+              <div className="h-dvh w-screen overflow-hidden relative bg-[var(--color-bg-surface-alt)]">
                 <MapView />
                 <LayoutOverlay />
               </div>

@@ -5,6 +5,7 @@ import "../../css/map/Map.css";
 import MapMarkers from "./MapMarkers";
 import { getPostsInBounds } from "../../services/post.service";
 import { useUIStore } from "../../store/useUIStore";
+import { usePostStore } from "../../store/usePostStore";
 import { handleError } from "../../lib/errorHandler";
 import { useSettingsStore } from "../../store/useSettingsStore";
 
@@ -75,6 +76,25 @@ export default function MapView() {
     fetchPosts();
   }, [fetchPosts]);
 
+  const handleMapClick = useCallback(() => {
+    const postStore = usePostStore.getState();
+    const uiStore = useUIStore.getState();
+
+    if (postStore.activePost) {
+      postStore.closePostDetail();
+      return;
+    }
+
+    if (uiStore.isMobilePanelOpen) {
+      uiStore.closeMobilePanel();
+      return;
+    }
+
+    if (uiStore.isRightPanelOpen) {
+      uiStore.closeRightPanel();
+    }
+  }, []);
+
   useEffect(() => {
     if (isMapLoaded) {
       fetchPosts();
@@ -129,6 +149,7 @@ export default function MapView() {
         mapStyle={getMapStyleUrl()}
         onLoad={handleMapLoad}
         onMoveEnd={handleMapMove}
+        onClick={handleMapClick}
       >
         <MapMarkers data={posts} />
       </Map>
