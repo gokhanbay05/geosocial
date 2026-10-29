@@ -10,7 +10,7 @@ import { X } from "lucide-react";
 
 export default function RightPanel() {
   const { isRightPanelOpen, closeRightPanel } = useUIStore();
-  const { clusterPosts } = usePostStore();
+  const { clusterPosts, activePost } = usePostStore();
 
   const { dragStyle, handleProps } = useSheetDrag({
     isOpen: isRightPanelOpen,
@@ -42,7 +42,10 @@ export default function RightPanel() {
 
   return (
     <aside className={panelClass} style={dragStyle}>
-      <SheetDragHandle handleProps={handleProps} />
+      <SheetDragHandle
+        handleProps={handleProps}
+        className={activePost ? "is-hidden-under-post" : ""}
+      />
 
       <div className="right-panel-inner">
         <div className="right-panel-header">

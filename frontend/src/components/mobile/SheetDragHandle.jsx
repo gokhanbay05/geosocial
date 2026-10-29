@@ -13,7 +13,7 @@ export default function SheetDragHandle({ handleProps, className = "" }) {
         aria-label="Drag or tap to close panel"
         {...handleProps}
       >
-        <ChevronDown size={20} strokeWidth={2.5} />
+        <ChevronDown size={18} strokeWidth={2.5} />
       </div>
     </div>
   );

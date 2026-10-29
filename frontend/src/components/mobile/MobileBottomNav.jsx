@@ -114,7 +114,7 @@ export default function MobileBottomNav() {
             tabIndex={0}
             aria-label="Open profile drawer"
           >
-            <ChevronUp size={20} strokeWidth={2.5} />
+            <ChevronUp size={18} strokeWidth={2.5} />
           </div>
         )}
 

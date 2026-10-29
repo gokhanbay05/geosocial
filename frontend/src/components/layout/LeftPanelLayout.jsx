@@ -10,11 +10,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "../../store/useUIStore";
+import { usePostStore } from "../../store/usePostStore";
 import { useSheetDrag } from "../../hooks/useSheetDrag";
 import SheetDragHandle from "../mobile/SheetDragHandle";
 
 export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
   const { openModal, isMobilePanelOpen, closeMobilePanel } = useUIStore();
+  const { activePost } = usePostStore();
 
   const { dragStyle, handleProps } = useSheetDrag({
     isOpen: isMobilePanelOpen,
@@ -38,7 +40,10 @@ export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
         </defs>
       </svg>
 
-      <SheetDragHandle handleProps={handleProps} />
+      <SheetDragHandle
+        handleProps={handleProps}
+        className={activePost ? "is-hidden-under-post" : ""}
+      />
 
       <div className="left-panel-inner">
         <div className="panel-header-area">

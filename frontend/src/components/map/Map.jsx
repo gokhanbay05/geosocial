@@ -6,6 +6,7 @@ import MapMarkers from "./MapMarkers";
 import { getPostsInBounds } from "../../services/post.service";
 import { useUIStore } from "../../store/useUIStore";
 import { usePostStore } from "../../store/usePostStore";
+import { getLastSheetCloseTime } from "../../hooks/useSheetDrag";
 import { handleError } from "../../lib/errorHandler";
 import { useSettingsStore } from "../../store/useSettingsStore";
 
@@ -77,6 +78,10 @@ export default function MapView() {
   }, [fetchPosts]);
 
   const handleMapClick = useCallback(() => {
+    if (Date.now() - getLastSheetCloseTime() < 450) {
+      return;
+    }
+
     const postStore = usePostStore.getState();
     const uiStore = useUIStore.getState();
 
