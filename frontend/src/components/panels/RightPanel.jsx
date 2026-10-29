@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import "../../css/panels/RightPanel.css";
 import { useUIStore } from "../../store/useUIStore";
 import { usePostStore } from "../../store/usePostStore";
+import { useSheetDrag } from "../../hooks/useSheetDrag";
+import SheetDragHandle from "../mobile/SheetDragHandle";
 import StoryGrid from "../feed/StoryGrid";
 import Button from "../core/Button";
 import { X } from "lucide-react";
@@ -9,6 +11,11 @@ import { X } from "lucide-react";
 export default function RightPanel() {
   const { isRightPanelOpen, closeRightPanel } = useUIStore();
   const { clusterPosts } = usePostStore();
+
+  const { dragStyle, handleProps } = useSheetDrag({
+    isOpen: isRightPanelOpen,
+    onClose: closeRightPanel,
+  });
 
   const [sortBy, setSortBy] = useState("newest");
 
@@ -34,8 +41,10 @@ export default function RightPanel() {
   }, [clusterPosts, sortBy]);
 
   return (
-    <aside className={panelClass}>
+    <aside className={panelClass} style={dragStyle}>
       <div className="right-panel-inner">
+        <SheetDragHandle handleProps={handleProps} />
+
         <div className="right-panel-header">
           <div className="panel-header">Posts in this area</div>
           <Button variant="ghost" size="icon" onClick={closeRightPanel}>

@@ -154,3 +154,23 @@
   justify-content: center;
   padding: 20px 0;
 }
+
+/* ==================== MOBILE & TABLET (< 1024px) ==================== */
+@media (max-width: 1023px) {
+  .story-grid-scroll-area {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .story-card::before,
+  .story-card::after {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 639px) {
+  .story-grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}

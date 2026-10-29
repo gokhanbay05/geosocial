@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { useUIStore } from "./useUIStore";
+import { usePostStore } from "./usePostStore";
 
 export const useProfileStore = create((set) => ({
     viewingProfile: null,
@@ -8,6 +9,13 @@ export const useProfileStore = create((set) => ({
     openProfile: (username) =>
         set((state) => {
             const uiStore = useUIStore.getState();
+
+            if (
+                typeof window !== "undefined" &&
+                window.matchMedia("(max-width: 1023px)").matches
+            ) {
+                usePostStore.getState().closePostDetail();
+            }
 
             if (state.viewingProfile === username) {
                 uiStore.setLeftPanelTab("search");

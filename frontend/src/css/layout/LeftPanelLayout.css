@@ -95,3 +95,60 @@
 .nav-btn-add:hover {
   transform: scale(1.25);
 }
+
+.mobile-panel-close-btn {
+  display: none;
+}
+
+/* ==================== MOBILE & TABLET (< 1024px) ==================== */
+@media (max-width: 1023px) {
+  .left-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    height: calc(86dvh - 64px - env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+    animation: none;
+    transform: translateY(115%);
+    visibility: hidden;
+    transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0.45s step-end;
+  }
+
+  .left-panel.is-mobile-open {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s step-start;
+  }
+
+  .left-panel-inner {
+    border-radius: 24px 24px 0 0;
+    border-bottom: none;
+    box-shadow: 0 -10px 36px var(--color-shadow-strong);
+  }
+
+  .panel-header-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 10px 16px;
+  }
+
+  .mobile-panel-close-btn {
+    display: inline-flex;
+    color: var(--color-text-muted);
+  }
+
+  .panel-content-area {
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .panel-nav-bar {
+    display: none;
+  }
+}

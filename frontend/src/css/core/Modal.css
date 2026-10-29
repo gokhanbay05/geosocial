@@ -74,3 +74,27 @@
     opacity: 1;
   }
 }
+
+/* ==================== MOBILE & TABLET (< 1024px) ==================== */
+@media (max-width: 1023px) {
+  .modal-overlay {
+    padding: 16px;
+    box-sizing: border-box;
+    height: 100dvh;
+  }
+
+  .modal-content {
+    max-height: 86dvh;
+    border-radius: 24px;
+  }
+
+  .modal-header {
+    padding: 12px 18px;
+  }
+
+  .modal-body {
+    padding: 18px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}

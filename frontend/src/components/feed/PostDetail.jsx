@@ -16,6 +16,8 @@ import { getPostById, likePost } from "../../services/post.service";
 import { handleError } from "../../lib/errorHandler";
 import toast from "react-hot-toast";
 import SortSelect from "../core/SortSelect";
+import { useSheetDrag } from "../../hooks/useSheetDrag";
+import SheetDragHandle from "../mobile/SheetDragHandle";
 
 export default function PostDetail() {
   const { openModal, triggerRefresh } = useUIStore();
@@ -98,6 +100,11 @@ export default function PostDetail() {
   }, [activePost?._id, commentSortBy]);
 
   const isOpen = !!activePost;
+
+  const { dragStyle, handleProps } = useSheetDrag({
+    isOpen,
+    onClose: closePostDetail,
+  });
 
   useEffect(() => {
     if (!isOpen && videoRef.current) {
@@ -222,7 +229,9 @@ export default function PostDetail() {
   );
 
   return (
-    <div className={overlayClass}>
+    <div className={overlayClass} style={dragStyle}>
+      <SheetDragHandle handleProps={handleProps} />
+
       <div className="detail-media-section">
         {post.mediaType === "image" && (
           <img

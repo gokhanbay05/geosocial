@@ -17,3 +17,11 @@
   pointer-events: none;
   overflow: hidden;
 }
+
+/* ==================== MOBILE & TABLET (< 1024px) ==================== */
+@media (max-width: 1023px) {
+  .layout-overlay {
+    padding: 0;
+    gap: 0;
+  }
+}

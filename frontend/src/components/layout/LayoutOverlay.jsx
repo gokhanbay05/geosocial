@@ -2,6 +2,7 @@ import "../../css/layout/LayoutOverlay.css";
 import LeftPanel from "../panels/LeftPanel";
 import RightPanel from "../panels/RightPanel";
 import PostDetail from "../feed/PostDetail";
+import MobileBottomNav from "../mobile/MobileBottomNav";
 import CreatePostModal from "../modals/CreatePostModal";
 import EditProfileModal from "../modals/EditProfileModal";
 import UserListModal from "../modals/UserListModal";
@@ -13,6 +14,7 @@ export default function LayoutOverlay() {
       <LeftPanel />
       <RightPanel />
       <PostDetail />
+      <MobileBottomNav />
 
       <CreatePostModal />
       <EditProfileModal />

@@ -1,17 +1,35 @@
 import "../../css/layout/LeftPanelLayout.css";
 import Button from "../core/Button";
-import { User, Search, Plus, MessageCircle, Settings, Map } from "lucide-react"; // Map eklendi
+import {
+  User,
+  Search,
+  Plus,
+  MessageCircle,
+  Settings,
+  Map,
+  ChevronDown,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "../../store/useUIStore";
+import { useSheetDrag } from "../../hooks/useSheetDrag";
+import SheetDragHandle from "../mobile/SheetDragHandle";
 
 export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
-  const { openModal } = useUIStore();
+  const { openModal, isMobilePanelOpen, closeMobilePanel } = useUIStore();
+
+  const { dragStyle, handleProps } = useSheetDrag({
+    isOpen: isMobilePanelOpen,
+    onClose: closeMobilePanel,
+  });
 
   const getNavClass = (tabName) =>
     cn("nav-btn", activeTab === tabName && "is-active");
 
   return (
-    <aside className="left-panel">
+    <aside
+      className={cn("left-panel", isMobilePanelOpen && "is-mobile-open")}
+      style={dragStyle}
+    >
       <svg width="0" height="0" className="absolute">
         <defs>
           <linearGradient id="panel-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -22,6 +40,8 @@ export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
       </svg>
 
       <div className="left-panel-inner">
+        <SheetDragHandle handleProps={handleProps} />
+
         <div className="panel-header-area">
           <div className="panel-logo-container">
             <Map
@@ -32,6 +52,16 @@ export default function LeftPanelLayout({ children, activeTab, onTabChange }) {
             />
             <h1 className="app-logo-text text-gradient-animated">GeoSocial</h1>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="mobile-panel-close-btn"
+            onClick={closeMobilePanel}
+            aria-label="Close panel"
+          >
+            <ChevronDown size={22} />
+          </Button>
         </div>
 
         <div className="panel-content-area">{children}</div>
