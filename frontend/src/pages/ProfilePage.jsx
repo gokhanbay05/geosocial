@@ -167,12 +167,15 @@ export default function ProfilePage() {
   };
 
   const handleMessageClick = async () => {
-    await fetchConversations();
+    let currentConversations = useChatStore.getState().conversations;
 
-    const currentConversations = useChatStore.getState().conversations;
+    if (currentConversations.length === 0) {
+      await fetchConversations({ silent: true });
+      currentConversations = useChatStore.getState().conversations;
+    }
 
     const existingConv = currentConversations.find(
-      (c) => c.otherUser._id === displayData._id
+      (c) => c.otherUser?._id?.toString() === displayData._id?.toString()
     );
 
     if (existingConv) {

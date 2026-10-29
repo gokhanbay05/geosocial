@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import "../../css/mobile/MobileBottomNav.css";
 import Button from "../core/Button";
+import SheetDragHandle from "./SheetDragHandle";
 import {
   Map,
   User,
@@ -8,7 +9,6 @@ import {
   Plus,
   MessageCircle,
   Settings,
-  ChevronUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "../../store/useUIStore";
@@ -106,16 +106,13 @@ export default function MobileBottomNav() {
 
       <div className="mobile-bottom-nav">
         {isAllClosed && (
-          <div
-            className="mobile-closed-notch"
-            onPointerDown={handleNotchPointerDown}
-            onPointerUp={handleNotchPointerUp}
-            role="button"
-            tabIndex={0}
-            aria-label="Open profile drawer"
-          >
-            <ChevronUp size={18} strokeWidth={2.5} />
-          </div>
+          <SheetDragHandle
+            direction="up"
+            handleProps={{
+              onPointerDown: handleNotchPointerDown,
+              onPointerUp: handleNotchPointerUp,
+            }}
+          />
         )}
 
         <Button

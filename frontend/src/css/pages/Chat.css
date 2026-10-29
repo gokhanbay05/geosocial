@@ -172,6 +172,26 @@
     opacity: 0.9;
 }
 
+.msg-sending {
+    opacity: 0.78;
+}
+
+.message-image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.message-image-uploading {
+    position: absolute;
+    inset: 0;
+    bottom: 6px;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 .chat-image-preview-area {
     padding: 8px 16px;

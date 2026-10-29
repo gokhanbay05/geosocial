@@ -59,32 +59,4 @@
     touch-action: none;
     overflow: visible;
   }
-
-  .mobile-closed-notch {
-    pointer-events: auto;
-    position: absolute;
-    top: -19px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 96px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-default);
-    border-bottom: none;
-    border-radius: 14px 14px 0 0;
-    box-shadow: 0 -4px 12px var(--color-shadow-default);
-    color: var(--color-text-muted);
-    cursor: pointer;
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-    transition: color 0.2s ease, transform 0.2s ease;
-  }
-
-  .mobile-closed-notch:active {
-    color: var(--color-primary);
-  }
 }

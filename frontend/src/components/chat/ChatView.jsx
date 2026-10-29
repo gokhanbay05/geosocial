@@ -21,6 +21,7 @@ export default function ChatView() {
         fetchMessages,
         sendNewMessage,
         isConversationsLoading,
+        isMessagesLoading,
         socket,
         typingUsers,
         onlineUsers
@@ -66,9 +67,22 @@ export default function ChatView() {
         if (selectedConversation?._id && !selectedConversation.isNewConversation) {
             fetchMessages(selectedConversation._id);
         } else if (selectedConversation?.isNewConversation) {
-            useChatStore.setState({ messages: [] });
+            useChatStore.setState({ messages: [], isMessagesLoading: false });
         }
     }, [selectedConversation?._id, selectedConversation?.isNewConversation, fetchMessages]);
+
+    useEffect(() => {
+        setInputText("");
+        setImageFile(null);
+        setImagePreview((prev) => {
+            if (prev && prev.startsWith("blob:")) {
+                URL.revokeObjectURL(prev);
+            }
+            return null;
+        });
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setShowEmojiPicker(false);
+    }, [selectedConversation?._id, selectedConversation?.otherUser?._id]);
 
     const handleInputChange = (e) => {
         setInputText(e.target.value);
@@ -98,6 +112,9 @@ export default function ChatView() {
                     toast.error("File too large (max 5MB)");
                     return;
                 }
+                if (imagePreview && imagePreview.startsWith("blob:")) {
+                    URL.revokeObjectURL(imagePreview);
+                }
                 setImageFile(file);
                 setImagePreview(URL.createObjectURL(file));
             } else {
@@ -106,7 +123,10 @@ export default function ChatView() {
         }
     };
 
-    const removeImage = () => {
+    const removeImage = (revokeBlob = true) => {
+        if (revokeBlob && imagePreview && imagePreview.startsWith("blob:")) {
+            URL.revokeObjectURL(imagePreview);
+        }
         setImageFile(null);
         setImagePreview(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -117,7 +137,13 @@ export default function ChatView() {
     };
 
     const handleSendMessage = async () => {
-        if (!inputText.trim() && !imageFile) return;
+        const textToSend = inputText.trim();
+        const fileToSend = imageFile;
+        const previewToSend = imagePreview;
+
+        if (!textToSend && !fileToSend) return;
+        if (!selectedConversation?.otherUser?._id) return;
+
         const receiverId = selectedConversation.otherUser._id;
         if (socket && selectedConversation._id) {
             if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
@@ -127,15 +153,22 @@ export default function ChatView() {
             });
             setIsTyping(false);
         }
-        const formData = new FormData();
-        formData.append("text", inputText);
-        if (imageFile) {
-            formData.append("image", imageFile);
-        }
-        await sendNewMessage(receiverId, formData);
+
+        // Çoklu tıklamayı önlemek ve anında geri bildirim vermek için input'u hemen sıfırla
         setInputText("");
-        removeImage();
+        removeImage(false);
         setShowEmojiPicker(false);
+
+        const formData = new FormData();
+        formData.append("text", textToSend);
+        if (fileToSend) {
+            formData.append("image", fileToSend);
+        }
+
+        await sendNewMessage(receiverId, formData, {
+            text: textToSend,
+            imagePreview: previewToSend,
+        });
     };
 
     if (selectedConversation) {
@@ -158,30 +191,46 @@ export default function ChatView() {
                 </div>
 
                 <div className="messages-list" ref={messagesContainerRef}>
-                    {messages.map((msg) => {
-                        const isSender = (msg.sender?._id || msg.sender).toString() === currentUser._id.toString();
-                        return (
-                            <div key={msg._id} className={`message-bubble ${isSender ? "msg-sent" : "msg-received"}`}>
-                                {msg.messageType === "image" && msg.mediaUrl && (
-                                    <img
-                                        src={getFileUrl(msg.mediaUrl)}
-                                        alt="Message Attachment"
-                                        className="message-image"
-                                        onClick={() => window.open(getFileUrl(msg.mediaUrl), "_blank")}
-                                        onLoad={scrollToBottom}
-                                    />
-                                )}
-                                {msg.text && <span>{msg.text}</span>}
-                            </div>
-                        );
-                    })}
+                    {isMessagesLoading && messages.length === 0 ? (
+                        <div className="flex flex-1 items-center justify-center p-8">
+                            <Spinner color="primary" />
+                        </div>
+                    ) : (
+                        messages.map((msg) => {
+                            const isSender = (msg.sender?._id || msg.sender)?.toString() === currentUser?._id?.toString();
+                            return (
+                                <div
+                                    key={msg._id}
+                                    className={`message-bubble ${isSender ? "msg-sent" : "msg-received"} ${msg.isSending ? "msg-sending" : ""}`}
+                                >
+                                    {msg.messageType === "image" && msg.mediaUrl && (
+                                        <div className="message-image-wrapper">
+                                            <img
+                                                src={getFileUrl(msg.mediaUrl)}
+                                                alt="Message Attachment"
+                                                className="message-image"
+                                                onClick={() => !msg.isSending && window.open(getFileUrl(msg.mediaUrl), "_blank")}
+                                                onLoad={scrollToBottom}
+                                            />
+                                            {msg.isSending && (
+                                                <div className="message-image-uploading">
+                                                    <Spinner size="sm" color="white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    {msg.text && <span>{msg.text}</span>}
+                                </div>
+                            );
+                        })
+                    )}
                 </div>
 
                 {imagePreview && (
                     <div className="chat-image-preview-area">
                         <div className="preview-thumbnail-wrapper">
                             <img src={imagePreview} alt="Preview" className="preview-thumbnail" />
-                            <button onClick={removeImage} className="preview-remove-btn">
+                            <button onClick={() => removeImage(true)} className="preview-remove-btn">
                                 <X size={12} />
                             </button>
                         </div>

@@ -36,18 +36,52 @@ export const useChatStore = create((set, get) => ({
         socket.on("getOnlineUsers", (users) => set({ onlineUsers: users }));
 
         socket.on("newMessage", (message) => {
-            const { selectedConversation, messages } = get();
+            const { selectedConversation } = get();
             const currentUser = useAuthStore.getState().user;
 
-            if (message.sender._id === currentUser._id || message.sender === currentUser._id) return;
-
-            if (selectedConversation && (selectedConversation._id === message.conversation)) {
-                set((state) => ({
-                    messages: [...state.messages, message],
-                }));
+            if (
+                !currentUser ||
+                message.sender?._id === currentUser._id ||
+                message.sender === currentUser._id
+            ) {
+                return;
             }
 
-            get().fetchConversations();
+            if (
+                selectedConversation &&
+                selectedConversation._id?.toString() === message.conversation?.toString()
+            ) {
+                set((state) => {
+                    if (state.messages.some((m) => m._id === message._id)) return state;
+                    return {
+                        messages: [...state.messages, message],
+                    };
+                });
+            }
+
+            const existingConv = get().conversations.some(
+                (c) => c._id?.toString() === message.conversation?.toString()
+            );
+
+            if (existingConv) {
+                set((state) => {
+                    const updated = state.conversations.map((conv) =>
+                        conv._id?.toString() === message.conversation?.toString()
+                            ? {
+                                  ...conv,
+                                  lastMessage: message,
+                                  updatedAt: message.createdAt || new Date().toISOString(),
+                              }
+                            : conv
+                    );
+                    updated.sort(
+                        (a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
+                    );
+                    return { conversations: updated };
+                });
+            } else {
+                get().fetchConversations({ silent: true });
+            }
         });
 
         socket.on("typing", ({ conversationId }) => {
@@ -67,8 +101,10 @@ export const useChatStore = create((set, get) => ({
         }
     },
 
-    fetchConversations: async () => {
-        set({ isConversationsLoading: true });
+    fetchConversations: async ({ silent = false } = {}) => {
+        if (!silent && get().conversations.length === 0) {
+            set({ isConversationsLoading: true });
+        }
         try {
             const data = await getConversations();
             set({ conversations: data });
@@ -80,43 +116,150 @@ export const useChatStore = create((set, get) => ({
     },
 
     fetchMessages: async (conversationId) => {
-        set({ isMessagesLoading: true });
+        set({ isMessagesLoading: true, messages: [] });
         try {
             const data = await getMessages(conversationId);
-            set({ messages: data });
+            // Konuşma değiştiyse eski konuşmanın cevabını ekrana basma (Race condition koruması)
+            if (get().selectedConversation?._id !== conversationId) return;
+            set({ messages: data, isMessagesLoading: false });
         } catch (error) {
+            if (get().selectedConversation?._id === conversationId) {
+                set({ isMessagesLoading: false });
+            }
             handleError(error, { context: "FetchMessages" });
-        } finally {
-            set({ isMessagesLoading: false });
         }
     },
 
-    sendNewMessage: async (receiverId, messageData) => {
+    sendNewMessage: async (receiverId, formData, optimisticMeta = {}) => {
+        const currentUser = useAuthStore.getState().user;
+        const { text = "", imagePreview = null } = optimisticMeta;
+        const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+        const optimisticMessage = {
+            _id: tempId,
+            conversation: get().selectedConversation?._id || "temp-conv",
+            sender: currentUser?._id,
+            text,
+            messageType: imagePreview ? "image" : "text",
+            mediaUrl: imagePreview || "",
+            isSending: true,
+            createdAt: new Date().toISOString(),
+        };
+
+        set((state) => ({
+            messages: [...state.messages, optimisticMessage],
+        }));
+
         try {
-            const newMessage = await sendMessage(receiverId, messageData);
+            const newMessage = await sendMessage(receiverId, formData);
 
             set((state) => {
-                if (state.messages.some(m => m._id === newMessage._id)) return state;
+                const isStillInTargetChat =
+                    state.messages.some((m) => m._id === tempId) ||
+                    state.selectedConversation?._id?.toString() ===
+                        newMessage.conversation?.toString() ||
+                    state.selectedConversation?.otherUser?._id?.toString() ===
+                        receiverId?.toString();
 
-                const newState = { messages: [...state.messages, newMessage] };
+                let updatedMessages = state.messages;
+                if (isStillInTargetChat) {
+                    const alreadyHasReal = state.messages.some(
+                        (m) => m._id === newMessage._id
+                    );
+                    if (alreadyHasReal) {
+                        updatedMessages = state.messages.filter((m) => m._id !== tempId);
+                    } else if (state.messages.some((m) => m._id === tempId)) {
+                        updatedMessages = state.messages.map((m) =>
+                            m._id === tempId ? newMessage : m
+                        );
+                    } else {
+                        updatedMessages = [...state.messages, newMessage];
+                    }
+                }
 
-                if (state.selectedConversation?.isNewConversation) {
-                    newState.selectedConversation = {
+                let updatedSelectedConv = state.selectedConversation;
+                if (
+                    state.selectedConversation?.isNewConversation &&
+                    state.selectedConversation?.otherUser?._id?.toString() ===
+                        receiverId?.toString()
+                ) {
+                    updatedSelectedConv = {
                         ...state.selectedConversation,
                         _id: newMessage.conversation,
-                        isNewConversation: false
+                        isNewConversation: false,
                     };
                 }
-                return newState;
+
+                // Konuşma listesini ekstra ağ isteği beklemeden anında güncelle
+                const convIdStr = newMessage.conversation?.toString();
+                const existsInList = state.conversations.some(
+                    (c) => c._id?.toString() === convIdStr
+                );
+
+                let updatedConversations = state.conversations;
+                if (existsInList) {
+                    updatedConversations = state.conversations.map((conv) =>
+                        conv._id?.toString() === convIdStr
+                            ? {
+                                  ...conv,
+                                  lastMessage: newMessage,
+                                  updatedAt:
+                                      newMessage.createdAt || new Date().toISOString(),
+                              }
+                            : conv
+                    );
+                    updatedConversations.sort(
+                        (a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
+                    );
+                } else if (updatedSelectedConv?.otherUser) {
+                    updatedConversations = [
+                        {
+                            _id: newMessage.conversation,
+                            otherUser: updatedSelectedConv.otherUser,
+                            lastMessage: newMessage,
+                            updatedAt: newMessage.createdAt || new Date().toISOString(),
+                        },
+                        ...state.conversations,
+                    ];
+                }
+
+                return {
+                    messages: updatedMessages,
+                    selectedConversation: updatedSelectedConv,
+                    conversations: updatedConversations,
+                };
             });
 
-            get().fetchConversations();
             return newMessage;
         } catch (error) {
+            set((state) => ({
+                messages: state.messages.filter((m) => m._id !== tempId),
+            }));
             handleError(error, { context: "SendMessage" });
+        } finally {
+            if (imagePreview && imagePreview.startsWith("blob:")) {
+                URL.revokeObjectURL(imagePreview);
+            }
         }
     },
 
-    setSelectedConversation: (conv) => set({ selectedConversation: conv, typingUsers: {} }),
-    resetChat: () => set({ selectedConversation: null, messages: [] }),
+    setSelectedConversation: (conv) =>
+        set((state) => {
+            const isSameConv =
+                Boolean(conv?._id) &&
+                state.selectedConversation?._id?.toString() === conv._id.toString();
+
+            if (isSameConv) {
+                return { selectedConversation: conv };
+            }
+
+            return {
+                selectedConversation: conv,
+                messages: [],
+                isMessagesLoading: Boolean(conv?._id && !conv.isNewConversation),
+                typingUsers: {},
+            };
+        }),
+    resetChat: () =>
+        set({ selectedConversation: null, messages: [], isMessagesLoading: false }),
 }));
