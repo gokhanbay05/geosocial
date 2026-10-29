@@ -10,11 +10,16 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 
+const allowedOrigins = [
+    process.env.CLIENT_URL?.replace(/\/$/, ""),
+    "http://localhost:5173",
+].filter(Boolean);
+
 const io = new Server(server, {
     cors: {
-        origin: [process.env.CLIENT_URL],
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
-        credentials: true
+        credentials: true,
     },
 });
 
@@ -22,19 +27,21 @@ const userSocketMap = {};
 
 io.use((socket, next) => {
     try {
-        const rawCookies = socket.handshake.headers.cookie;
-        if (!rawCookies) return next(new Error("Authentication error"));
+        const cookieName = process.env.COOKIE_NAME || "geosocial_jwt";
+        let token = socket.handshake.auth?.token;
 
-        const parsedCookies = parse(rawCookies);
-        const token = parsedCookies[process.env.COOKIE_NAME];
+        if (!token && socket.handshake.headers.cookie) {
+            const parsedCookies = parse(socket.handshake.headers.cookie);
+            token = parsedCookies[cookieName];
+        }
 
-        if (!token) return next(new Error("Token not found"));
+        if (!token) return next(new Error("Authentication error"));
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         socket.userId = decoded.userId;
         next();
     } catch (error) {
-        next(new Error("Internal error"));
+        next(new Error("Authentication error"));
     }
 });
 
